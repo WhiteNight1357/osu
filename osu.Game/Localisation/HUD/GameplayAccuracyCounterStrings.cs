@@ -34,6 +34,21 @@ namespace osu.Game.Localisation.HUD
         /// </summary>
         public static LocalisableString AccuracyDisplayModeMin => new TranslatableString(getKey(@"accuracy_display_mode_min"), "Minimum achievable");
 
+        /// <summary>
+        /// "Standard (Unmodified)"
+        /// </summary>
+        public static LocalisableString AccuracyDisplayModeStandardUnmodified => new TranslatableString(getKey(@"accuracy_display_mode_standard_unmodified"), "Standard (Unmodified)");
+
+        /// <summary>
+        /// "Maximum achievable (Unmodified)"
+        /// </summary>
+        public static LocalisableString AccuracyDisplayModeMaxUnmodified => new TranslatableString(getKey(@"accuracy_display_mode_max_unmodified"), "Maximum achievable (Unmodified)");
+
+        /// <summary>
+        /// "Minimum achievable (Unmodified)"
+        /// </summary>
+        public static LocalisableString AccuracyDisplayModeMinUnmodified => new TranslatableString(getKey(@"accuracy_display_mode_min_unmodified"), "Minimum achievable (Unmodified)");
+
         private static string getKey(string key) => $"{prefix}:{key}";
     }
 }

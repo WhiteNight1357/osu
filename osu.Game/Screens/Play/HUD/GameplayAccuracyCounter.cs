@@ -8,6 +8,8 @@ using osu.Game.Configuration;
 using osu.Game.Graphics.UserInterface;
 using osu.Game.Localisation.HUD;
 using osu.Game.Rulesets.Scoring;
+using osu.Game.Rulesets.Mods;
+using System.Linq;
 
 namespace osu.Game.Screens.Play.HUD
 {
@@ -19,6 +21,8 @@ namespace osu.Game.Screens.Play.HUD
         [Resolved]
         private ScoreProcessor scoreProcessor { get; set; } = null!;
 
+        [Resolved]
+        private GameplayState gameplayState { get; set; } = null!;
         protected override void LoadComplete()
         {
             base.LoadComplete();
@@ -27,19 +31,64 @@ namespace osu.Game.Screens.Play.HUD
             {
                 Current.UnbindBindings();
 
-                switch (mode.NewValue)
+                dynamic? modAccuracyWeightAdjust = gameplayState.Mods.FirstOrDefault(x => x?.GetType()?.IsSubclassOf(typeof(ModAccuracyWeightAdjust)) ?? false);
+                if (modAccuracyWeightAdjust != null)
                 {
-                    case AccuracyDisplayMode.Standard:
-                        Current.BindTo(scoreProcessor.Accuracy);
-                        break;
+                    switch (mode.NewValue)
+                    {
+                        case AccuracyDisplayMode.Standard:
+                            Current.BindTo(modAccuracyWeightAdjust.WeightAdjustedAccuracy);
+                            break;
 
-                    case AccuracyDisplayMode.MinimumAchievable:
-                        Current.BindTo(scoreProcessor.MinimumAccuracy);
-                        break;
+                        case AccuracyDisplayMode.MinimumAchievable:
+                            Current.BindTo(modAccuracyWeightAdjust.MinimumWeightAdjustedAccuracy);
+                            break;
 
-                    case AccuracyDisplayMode.MaximumAchievable:
-                        Current.BindTo(scoreProcessor.MaximumAccuracy);
-                        break;
+                        case AccuracyDisplayMode.MaximumAchievable:
+                            Current.BindTo(modAccuracyWeightAdjust.MaximumWeightAdjustedAccuracy);
+                            break;
+
+                        case AccuracyDisplayMode.StandardUnmodified:
+                            Current.BindTo(scoreProcessor.Accuracy);
+                            break;
+
+                        case AccuracyDisplayMode.MinimumAchievableUnmodified:
+                            Current.BindTo(scoreProcessor.MinimumAccuracy);
+                            break;
+
+                        case AccuracyDisplayMode.MaximumAchievableUnmodified:
+                            Current.BindTo(scoreProcessor.MaximumAccuracy);
+                            break;
+                    }
+                }
+                else
+                {
+                    switch (mode.NewValue)
+                    {
+                        case AccuracyDisplayMode.Standard:
+                            Current.BindTo(scoreProcessor.Accuracy);
+                            break;
+
+                        case AccuracyDisplayMode.MinimumAchievable:
+                            Current.BindTo(scoreProcessor.MinimumAccuracy);
+                            break;
+
+                        case AccuracyDisplayMode.MaximumAchievable:
+                            Current.BindTo(scoreProcessor.MaximumAccuracy);
+                            break;
+
+                        case AccuracyDisplayMode.StandardUnmodified:
+                            Current.BindTo(scoreProcessor.Accuracy);
+                            break;
+
+                        case AccuracyDisplayMode.MinimumAchievableUnmodified:
+                            Current.BindTo(scoreProcessor.MinimumAccuracy);
+                            break;
+
+                        case AccuracyDisplayMode.MaximumAchievableUnmodified:
+                            Current.BindTo(scoreProcessor.MaximumAccuracy);
+                            break;
+                    }
                 }
             }, true);
 
@@ -59,7 +108,16 @@ namespace osu.Game.Screens.Play.HUD
             MaximumAchievable,
 
             [LocalisableDescription(typeof(GameplayAccuracyCounterStrings), nameof(GameplayAccuracyCounterStrings.AccuracyDisplayModeMin))]
-            MinimumAchievable
+            MinimumAchievable,
+
+            [LocalisableDescription(typeof(GameplayAccuracyCounterStrings), nameof(GameplayAccuracyCounterStrings.AccuracyDisplayModeStandardUnmodified))]
+            StandardUnmodified,
+
+            [LocalisableDescription(typeof(GameplayAccuracyCounterStrings), nameof(GameplayAccuracyCounterStrings.AccuracyDisplayModeMaxUnmodified))]
+            MaximumAchievableUnmodified,
+
+            [LocalisableDescription(typeof(GameplayAccuracyCounterStrings), nameof(GameplayAccuracyCounterStrings.AccuracyDisplayModeMinUnmodified))]
+            MinimumAchievableUnmodified
         }
     }
 }
